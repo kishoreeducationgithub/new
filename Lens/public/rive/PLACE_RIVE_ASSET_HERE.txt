@@ -1,0 +1,15 @@
+Place the web Rive asset here:
+
+/public/rive/movement-play-classroom.riv
+
+Expected contract:
+- artboard: ClassroomScene
+- state machine: MovementPlayMachine
+- inputs:
+  - activityIndex
+  - stepIndex
+  - isPlaying
+  - celebrate
+  - calmMode
+  - leaderActive
+  - followersActive
