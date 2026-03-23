@@ -1,9 +1,10 @@
 export function ToddlerAvatar({ avatar, pose }) {
   const roleClass = avatar.id === 'lead' ? 'scene-child--lead' : `scene-child--${avatar.depth}`
+  const variantClass = `scene-child--${avatar.variant ?? 'female'}`
 
   return (
     <div
-      className={`scene-child ${roleClass} scene-child--pose-${pose}`}
+      className={`scene-child ${roleClass} ${variantClass} scene-child--pose-${pose}`}
       style={{
         '--avatar-bottom': avatar.bottom,
         '--delay': avatar.delay,
@@ -16,7 +17,8 @@ export function ToddlerAvatar({ avatar, pose }) {
       <div
         className="scene-child__figure"
         style={{
-          '--dress-tone': avatar.dressTone,
+          '--dress-tone': avatar.outfitTone,
+          '--bottom-tone': avatar.bottomTone ?? avatar.outfitTone,
           '--skin-tone': avatar.skinTone,
           '--hair-tone': avatar.hairTone,
           '--accent-tone': avatar.accentTone,
@@ -25,8 +27,12 @@ export function ToddlerAvatar({ avatar, pose }) {
       >
         <div className="scene-child__head">
           <span className="scene-child__hair-back" />
-          <span className="scene-child__ponytail" />
-          <span className="scene-child__bow" />
+          {avatar.variant !== 'male' ? (
+            <>
+              <span className="scene-child__ponytail" />
+              <span className="scene-child__bow" />
+            </>
+          ) : null}
           <span className="scene-child__hair-bangs" />
           <span className="scene-child__eye scene-child__eye--left" />
           <span className="scene-child__eye scene-child__eye--right" />

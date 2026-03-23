@@ -499,6 +499,7 @@ button {
 
 .scene-child__figure {
   --dress-tone: #f8b0c8;
+  --bottom-tone: #ef92b4;
   --skin-tone: #efc39a;
   --hair-tone: #734b33;
   --accent-tone: #fff2a8;
@@ -572,6 +573,20 @@ button {
   border-radius: 0 0 48% 48%;
   background: var(--hair-tone);
   z-index: 2;
+}
+
+.scene-child--male .scene-child__hair-back {
+  inset: -7% 8% auto;
+  height: 48%;
+  border-radius: 58% 58% 34% 34%;
+}
+
+.scene-child--male .scene-child__hair-bangs {
+  top: 1%;
+  left: 12%;
+  width: 76%;
+  height: 18%;
+  border-radius: 44% 44% 38% 38%;
 }
 
 .scene-child__eye {
@@ -690,8 +705,29 @@ button {
   height: 86%;
   transform: translateX(-50%);
   border-radius: 42% 42% 24% 24%;
-  background: var(--dress-tone);
+  background: var(--bottom-tone);
   box-shadow: inset 0 -8px 0 rgba(255, 255, 255, 0.12);
+}
+
+.scene-child--male .scene-child__torso {
+  width: 38%;
+  height: 20%;
+  border-radius: 24px 24px 20px 20px;
+}
+
+.scene-child--male .scene-child__torso::before {
+  top: 11%;
+  width: 52%;
+  height: 16%;
+  border-radius: 0 0 16px 16px;
+}
+
+.scene-child--male .scene-child__torso::after {
+  top: 84%;
+  width: 118%;
+  height: 52%;
+  border-radius: 30% 30% 18% 18%;
+  box-shadow: inset 0 -6px 0 rgba(255, 255, 255, 0.12);
 }
 
 .scene-child__badge {
