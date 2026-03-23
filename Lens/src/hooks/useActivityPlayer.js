@@ -73,6 +73,33 @@ export function useActivityPlayer({ activities = movementPlayActivities, prefers
   })
 
   useEffect(() => {
+    narrationService.prime()
+  }, [narrationService])
+
+  const retrySpeechAfterActivation = useEffectEvent(() => {
+    if (isMuted || !isPlaying || narrationService.hasSpokenAtLeastOnce()) {
+      return
+    }
+
+    narrationService.prime()
+    speakCurrentStep()
+  })
+
+  useEffect(() => {
+    const handleUserActivation = () => {
+      retrySpeechAfterActivation()
+    }
+
+    window.addEventListener('pointerdown', handleUserActivation, { passive: true })
+    window.addEventListener('keydown', handleUserActivation)
+
+    return () => {
+      window.removeEventListener('pointerdown', handleUserActivation)
+      window.removeEventListener('keydown', handleUserActivation)
+    }
+  }, [])
+
+  useEffect(() => {
     narrationService.setMuted(isMuted)
 
     if (!isPlaying) {

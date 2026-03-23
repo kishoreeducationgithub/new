@@ -39,7 +39,7 @@ function loadAvailableVoices() {
     window.setTimeout(() => {
       window.speechSynthesis.removeEventListener('voiceschanged', handleVoicesChanged)
       resolve(window.speechSynthesis.getVoices())
-    }, 500)
+    }, 1200)
   })
 }
 
@@ -59,31 +59,124 @@ function selectWarmFemaleVoice(voices) {
 export function createWebNarrationService() {
   let isMuted = false
   let lastVoiceLabel = 'Subtitles only'
+  let speakRequestId = 0
+  let hasSpokenAtLeastOnce = false
 
-  const speechSupported = typeof window !== 'undefined' && 'speechSynthesis' in window
+  const speechSupported =
+    typeof window !== 'undefined' &&
+    'speechSynthesis' in window &&
+    typeof window.SpeechSynthesisUtterance !== 'undefined'
 
-  async function speak(text, { calm = false } = {}) {
-    if (!speechSupported || isMuted || !text) {
+  function applyUtteranceVoice(utterance, voice) {
+    if (voice) {
+      utterance.voice = voice
+      utterance.lang = voice.lang
+    } else {
+      utterance.lang = 'en-US'
+    }
+  }
+
+  function createUtterance(text, { calm = false } = {}, voice = null) {
+    const utterance = new window.SpeechSynthesisUtterance(text)
+    applyUtteranceVoice(utterance, voice)
+    utterance.rate = calm ? 0.86 : 0.92
+    utterance.pitch = 1.08
+    utterance.volume = 1
+    return utterance
+  }
+
+  function prime() {
+    if (!speechSupported) {
       return
     }
 
-    window.speechSynthesis.cancel()
+    loadAvailableVoices()
+
+    try {
+      window.speechSynthesis.resume()
+    } catch {
+      // Some browsers throw if speech has not started yet.
+    }
+  }
+
+  function waitForSpeechStart(utterance, requestId) {
+    return new Promise((resolve) => {
+      let settled = false
+
+      const finish = (didStart) => {
+        if (settled) {
+          return
+        }
+
+        settled = true
+        resolve(didStart && requestId === speakRequestId)
+      }
+
+      utterance.onstart = () => {
+        hasSpokenAtLeastOnce = true
+        finish(true)
+      }
+
+      utterance.onerror = () => {
+        finish(false)
+      }
+
+      window.setTimeout(() => {
+        finish(false)
+      }, 900)
+    })
+  }
+
+  async function speak(text, { calm = false } = {}) {
+    if (!speechSupported || isMuted || !text) {
+      return false
+    }
+
+    const synth = window.speechSynthesis
+    const requestId = ++speakRequestId
+
+    try {
+      synth.cancel()
+      synth.resume()
+    } catch {
+      // Resume can fail harmlessly before any speech has started.
+    }
 
     const voices = await loadAvailableVoices()
-    const selectedVoice = selectWarmFemaleVoice(voices)
 
-    const utterance = new SpeechSynthesisUtterance(text)
-    utterance.voice = selectedVoice
-    utterance.rate = calm ? 0.88 : 0.94
-    utterance.pitch = 1.08
-    utterance.volume = 1
+    if (requestId !== speakRequestId || isMuted) {
+      return false
+    }
+
+    const selectedVoice = selectWarmFemaleVoice(voices)
+    const utterance = createUtterance(text, { calm }, selectedVoice)
 
     lastVoiceLabel = selectedVoice ? `${selectedVoice.name} voice` : 'Browser narration'
-    window.speechSynthesis.speak(utterance)
+    synth.speak(utterance)
+
+    const didStart = await waitForSpeechStart(utterance, requestId)
+
+    if (didStart || requestId !== speakRequestId || isMuted) {
+      return didStart
+    }
+
+    try {
+      synth.cancel()
+      synth.resume()
+    } catch {
+      // Safe fallback if resume is not available yet.
+    }
+
+    const fallbackUtterance = createUtterance(text, { calm })
+    lastVoiceLabel = 'Browser narration'
+    synth.speak(fallbackUtterance)
+
+    return waitForSpeechStart(fallbackUtterance, requestId)
   }
 
   function cancel() {
     if (speechSupported) {
+      speakRequestId += 1
       window.speechSynthesis.cancel()
     }
   }
@@ -109,8 +202,10 @@ export function createWebNarrationService() {
 
   return {
     cancel,
+    hasSpokenAtLeastOnce: () => hasSpokenAtLeastOnce,
     getStatusLabel,
     getSupported: () => speechSupported,
+    prime,
     setMuted,
     speak,
   }
