@@ -1,51 +1,54 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import { toddlerTheme } from '../theme/toddlerTheme'
 
 type SubtitleBarProps = {
-  line: string
-  voiceLabel: string
+  text: string
+  supportLabel?: string
 }
 
-export function SubtitleBar({ line, voiceLabel }: SubtitleBarProps) {
+export function SubtitleBar({ text, supportLabel }: SubtitleBarProps) {
   return (
     <View style={styles.container}>
       <View style={styles.topline}>
-        <Text style={styles.label}>Narration + Subtitles</Text>
-        <Text style={styles.voice}>{voiceLabel}</Text>
+        <Text style={styles.label}>Subtitles</Text>
+        {supportLabel ? <Text style={styles.voice}>{supportLabel}</Text> : null}
       </View>
-      <Text style={styles.line}>{line}</Text>
+      <Text style={styles.line}>{text || 'Subtitles will appear here when a movement begins.'}</Text>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(255, 251, 242, 0.94)',
-    borderRadius: 24,
-    padding: 18,
+    backgroundColor: toddlerTheme.colors.surface,
+    borderColor: toddlerTheme.colors.border,
+    borderRadius: toddlerTheme.radii.lg,
+    borderWidth: 1,
+    padding: toddlerTheme.spacing.lg,
   },
   topline: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 12,
+    gap: toddlerTheme.spacing.sm,
   },
   label: {
-    color: '#53746f',
+    color: toddlerTheme.colors.textMuted,
     fontSize: 12,
     fontWeight: '800',
     letterSpacing: 1.8,
     textTransform: 'uppercase',
   },
   voice: {
-    color: '#48636e',
-    fontSize: 14,
+    color: toddlerTheme.colors.textSecondary,
+    fontSize: 13,
     fontWeight: '700',
   },
   line: {
-    marginTop: 14,
-    color: '#24424b',
+    color: toddlerTheme.colors.textPrimary,
     fontSize: 24,
     fontWeight: '700',
     lineHeight: 32,
+    marginTop: toddlerTheme.spacing.sm,
   },
 })

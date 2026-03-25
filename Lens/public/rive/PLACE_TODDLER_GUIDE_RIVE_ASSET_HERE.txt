@@ -1,0 +1,8 @@
+Place the toddler guide web Rive asset here:
+
+/public/rive/toddler-guide.riv
+
+Expected setup:
+- artboard: ToddlerGuide
+- state machine: ToddlerGuideMachine
+- inputs: activityIndex (number), isPlaying (boolean)
