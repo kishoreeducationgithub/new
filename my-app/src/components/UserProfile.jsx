@@ -1,11 +1,22 @@
-import React,{useContext} from 'react'
+import React, { useContext, useEffect } from 'react'
 import { UserContextInstance } from './UserContextNew'
+import UserUpdate from './UserUpdate'
+
 const UserProfile = () => {
-  const {user, updateName} = useContext(UserContextInstance)
+  const { user, updateName } = useContext(UserContextInstance)
+
+
+
+  useEffect(()=>{
+    
+
+  },[])
+
   return (
     <div>
+      <h1>User Profile</h1>
       <p>Name: {user.name}</p>
-      <button onClick={() => updateName("John Doe")}>Update Name</button>   
+      <UserUpdate/>
     </div>
   )
 }

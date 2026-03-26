@@ -1,12 +1,15 @@
 import React from 'react'
-import UserContextNew from './components/UserContextNew'  
+import { UserProvider } from './components/UserContextNew'
 import UserProfile from './components/UserProfile'
+
 const App = () => {
+  const 
   return (
-    <div>
-      <UserContextNew/>
-      <UserProfile/>  
-    </div>
+    <UserProvider>
+      <div>
+        <UserProfile />
+      </div>
+    </UserProvider>
   )
 }
 
