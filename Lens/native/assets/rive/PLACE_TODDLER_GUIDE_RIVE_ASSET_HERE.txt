@@ -1,8 +1,0 @@
-Place the toddler guide React Native Rive asset here:
-
-native/assets/rive/toddler-guide.riv
-
-Expected setup:
-- artboard: ToddlerGuide
-- state machine: ToddlerGuideMachine
-- inputs: activityIndex (number), isPlaying (boolean)
